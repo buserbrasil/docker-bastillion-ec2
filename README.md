@@ -1,5 +1,5 @@
 # docker-bastillion
-Docker image for [Bastillion.io](https://www.bastillion.io/)
+Docker image for [Bastillion-EC2](https://www.bastillion.io/docs/bastillion-ec2/profiles/) (forked and adapted from [e-COSI/docker-bastillion](https://github.com/e-COSI/docker-bastillion))
 
 ## What is Bastillion?
 
@@ -10,6 +10,8 @@ A bastion host for administrators with features that promote infrastructure secu
 For more information visit the [Bastillion website](https://www.bastillion.io/) or the [GitHub page](https://github.com/bastillion-io/Bastillion)
 
 ## Quick start
+
+TODO: describe necessary AWS IAM role/user setup (https://github.com/bastillion-io/Bastillion-EC2/issues/73)
 
 Create a directory where you want to store the Bastillion data: 
 
@@ -22,8 +24,18 @@ Docker-Bastillion runs as user 1001. Not as root. You must change ownership of t
 Run the docker image. The below example runs the image detached. Update the path to the keydb directory as required: 
 
 `
-sudo docker run -d -p 8080:8080 -p 8443:8443 -v /PATH/TO/keydb:/opt/bastillion/jetty/bastillion/WEB-INF/classes/keydb ecosi/bastillion
+sudo docker run -d --env-file=/path/to/bastillion.env -p 8080:8080 -p 8443:8443 -v /PATH/TO/keydb:/opt/bastillion/jetty/bastillion/WEB-INF/classes/keydb buserbrasil/bastillionec2
 `
+
+bastillion.env must have the variables:
+
+```
+AWS_ACCESS_KEY_ID=AKIAXXXXXXXXXXXXXXXXXXX
+AWS_SECRET_ACCESS_KEY=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+DEFAULT_SYSTEM_USER=ec2-user
+DEFAULT_SYSTEM_PORT=22
+USER_TAG_NAME=bastillionuser
+```
 
 From a web browser, navigate to `https://<Instance IP>:8080` and login with:
 
@@ -31,6 +43,8 @@ From a web browser, navigate to `https://<Instance IP>:8080` and login with:
 username:admin
 password:changeme
 ```
+
+TODO: Review environment variables below
 
 ## Persistent storage
 _Currently not configurable using environment (need confirmation)_

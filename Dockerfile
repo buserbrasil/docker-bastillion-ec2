@@ -1,6 +1,6 @@
 FROM openjdk:9-slim
 
-LABEL maintainer="e-COSI <tech@e-cosi.com>"
+LABEL maintainer="tonylampada <tony.lampada@buser.com>"
 
 ARG BASTILLION_VERSION
 ARG BASTILLION_FILENAME_VERSION
@@ -11,16 +11,14 @@ ENV BASTILLION_VERSION=${BASTILLION_VERSION} \
     DOCKERIZE_VERSION=${DOCKERIZE_VERSION}
 
 RUN apt-get update && apt-get -y install wget && \
-    wget --quiet https://github.com/bastillion-io/Bastillion/releases/download/v${BASTILLION_VERSION}/bastillion-jetty-v${BASTILLION_FILENAME}.tar.gz && \
+    wget --quiet https://github.com/bastillion-io/Bastillion-EC2/releases/download/v${BASTILLION_VERSION}/bastillion-ec2-jetty-v${BASTILLION_FILENAME}.tar.gz && \
     wget --quiet https://github.com/jwilder/dockerize/releases/download/v${DOCKERIZE_VERSION}/dockerize-linux-amd64-v${DOCKERIZE_VERSION}.tar.gz && \
-    tar xzf bastillion-jetty-v${BASTILLION_FILENAME}.tar.gz -C /opt && \
+    tar xzf bastillion-ec2-jetty-v${BASTILLION_FILENAME}.tar.gz -C /opt && \
     tar xzf dockerize-linux-amd64-v${DOCKERIZE_VERSION}.tar.gz -C /usr/local/bin && \
-    mv /opt/Bastillion-jetty /opt/bastillion && \
-    rm bastillion-jetty-v${BASTILLION_FILENAME}.tar.gz dockerize-linux-amd64-v${DOCKERIZE_VERSION}.tar.gz && \
+    mv /opt/Bastillion-EC2-jetty /opt/bastillion && \
+    rm bastillion-ec2-jetty-v${BASTILLION_FILENAME}.tar.gz dockerize-linux-amd64-v${DOCKERIZE_VERSION}.tar.gz && \
     apt-get remove --purge -y wget && apt-get -y autoremove && rm -rf /var/lib/apt/lists/* && \
-    # create db directory for later permission update
     mkdir /opt/bastillion/jetty/bastillion/WEB-INF/classes/keydb && \
-    # remove default config - will be written by dockerize on startup
     rm /opt/bastillion/jetty/bastillion/WEB-INF/classes/BastillionConfig.properties
 
 # persistent data of Bastillion is stored here
@@ -39,10 +37,10 @@ ADD files/BastillionConfig.properties.tpl /opt
 ADD files/jetty-start.ini /opt/bastillion/jetty/start.ini
 
 # Custom Jetty start script
-ADD files/startBastillion.sh /opt/bastillion/startBastillion.sh
+ADD files/startBastillionEC2.sh /opt/bastillion/startBastillionEC2.sh
 
 # correct permission for running as non-root (f.e. on OpenShift)
-RUN chmod 755 /opt/bastillion/startBastillion.sh && \
+RUN chmod 755 /opt/bastillion/startBastillionEC2.sh && \
     chgrp -R 0 /opt/bastillion && \
     chmod -R g=u /opt/bastillion
 
@@ -52,4 +50,4 @@ USER 1001
 ENTRYPOINT ["/usr/local/bin/dockerize"]
 CMD ["-template", \
      "/opt/BastillionConfig.properties.tpl:/opt/bastillion/jetty/bastillion/WEB-INF/classes/BastillionConfig.properties", \
-     "/opt/bastillion/startBastillion.sh"]
+     "/opt/bastillion/startBastillionEC2.sh"]

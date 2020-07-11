@@ -14,6 +14,16 @@ privateKey={{ default .Env.SSH_PRIVATE_KEY "" }}
 publicKey={{ default .Env.SSH_PUBLIC_KEY "" }}
 #default passphrase, leave blank for key without passphrase
 defaultSSHPassphrase=${randomPassphrase}
+#alarm state select values
+alarmState=OK:OK,INSUFFICIENT_DATA:Insufficient Data,ALARM:Alarm
+#system status select values
+systemStatus=ok:OK,impaired:Impaired,insufficient-data:Insufficient Data,not-applicable:Not-Applicable
+#instance status select values
+instanceStatus=ok:OK,impaired:Impaired,insufficient-data:Insufficient Data,not-applicable:Not-Applicable
+#instance state select values
+instanceState=pending:Pending,running:Running,shutting-down:Shutting-down,terminated:Terminated,stopping:Stopping,stopped:Stopped
+#default instance state
+defaultInstanceState=running
 #enable audit
 enableInternalAudit={{ default .Env.ENABLE_INTERNAL_AUDIT "false" }}
 #keep audit logs for in days
@@ -40,10 +50,27 @@ passwordComplexityMsg=Passwords must be 8 to 20 characters\, contain one digit\,
 clientIPHeader={{ .Env.CLIENT_IP_HEADER }}
 #specify a external authentication module (ex: ldap-ol, ldap-ad).  Edit the jaas.conf to set connection details
 jaasModule=
+#Default profile for all authenticated LDAP users
+defaultProfileForLdap=
+#proxy settings for AWS client
+awsProtocol=https
+awsProxyHost=
+awsProxyPort=
+awsProxyUser=
+awsProxyPassword=
 #The session time out value of application in minutes
 sessionTimeout={{ default .Env.SESSION_TIMEOUT "15" }}
-#Requires JDK with "Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files" installed - http://www.oracle.com/technetwork/java/javase/downloads/index.html
-use256EncryptionKey=false
+#AWS IAM access key
+accessKey={{ default .Env.AWS_ACCESS_KEY_ID "" }}
+#AWS IAM secret key
+secretKey={{ default .Env.AWS_SECRET_ACCESS_KEY "" }}
+defaultSystemUser={{ default .Env.DEFAULT_SYSTEM_USER "ec2-user" }}
+defaultSystemPort={{ default .Env.DEFAULT_SYSTEM_PORT "22" }}
+userTagName={{ default .Env.USER_TAG_NAME "" }}
+#Use private DNS for instances
+useEC2PvtDNS={{ default .Env.USE_EC2_PVT_DNS "false" }}
+#Use private IP for instances
+useEC2PvtIP={{ default .Env.USE_EC2_PVT_IP "false" }}
 
 #Database and connection pool settings
 #Database user
